@@ -1,9 +1,9 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd frontend && npm install && npm run build && cd .. && cp -r frontend/dist/* backend/app/static/"
+buildCommand = "mkdir -p backend/app/static && cd frontend && npm install && npm run build && cd .. && cp -r frontend/dist/* backend/app/static/"
 
 [deploy]
-startCommand = "gunicorn -w 4 -b 0.0.0.0:$PORT 'app.main:create_app(\"production\")'"
+startCommand = "cd backend && gunicorn -w 4 -b 0.0.0.0:$PORT 'app.main:create_app(\"production\")'"
 
 [env]
 PYTHON_VERSION = "3.11"
