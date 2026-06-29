@@ -9,22 +9,22 @@ RUN apt-get update && apt-get install -y \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
+COPY backend/requirements.txt ./backend/
+RUN pip install --no-cache-dir -r backend/requirements.txt
+
 COPY frontend/package.json frontend/package-lock.json* ./frontend/
 RUN cd frontend && npm install
 
 COPY frontend/ ./frontend/
 RUN cd frontend && npm run build
 
-RUN mkdir -p backend/app/static
-RUN cp -r frontend/dist/* backend/app/static/
-
-COPY backend/requirements.txt ./backend/
-RUN pip install --no-cache-dir -r backend/requirements.txt
-
 COPY backend/ ./backend/
+
+RUN mkdir -p backend/app/static
+RUN cp -r frontend/dist/* backend/app/static/ 2>/dev/null || true
 
 WORKDIR /app/backend
 
 EXPOSE 5000
 
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app.main:create_app(\"production\")"]
+CMD gunicorn -w 4 -b 0.0.0.0:${PORT:-5000} 'app.main:create_app("production")'
