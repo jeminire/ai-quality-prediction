@@ -1,0 +1,13 @@
+node_modules/
+__pycache__/
+.env
+.env.local
+instance/
+logs/
+测试数据/
+frontend/dist/
+backend/models/*.pkl
+backend/models/*.json
+.git/
+.vscode/
+.idea/
