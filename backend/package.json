@@ -1,0 +1,12 @@
+{
+  "name": "ai-quality-backend",
+  "version": "1.0.0",
+  "description": "AI质量预测系统后端服务",
+  "scripts": {
+    "dev": "python run.py",
+    "start": "python run.py"
+  },
+  "keywords": ["ai", "quality", "prediction"],
+  "author": "",
+  "license": "MIT"
+}

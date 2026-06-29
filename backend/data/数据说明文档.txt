@@ -1,0 +1,112 @@
+# AI质量预测与智能管控系统数据集
+
+## 数据集概述
+本数据集模拟了汽车刹车盘生产线的多源数据，包含工艺参数、物料信息、质量标签、设备状态和环境参数，适用于机器学习模型训练和工业数据分析教学。
+
+## 文件说明
+
+### 1. process_data.csv - 工艺参数表 (5000条记录)
+生产线实时采集的工艺参数数据，包含：
+- record_id: 记录ID
+- batch_id: 生产批次号
+- timestamp: 时间戳
+- heating_temperature: 加热温度(°C)
+- forming_pressure: 成型压力(MPa)
+- spindle_speed: 主轴转速(rpm)
+- coolant_flow: 冷却液流量(L/min)
+- vibration_amplitude: 振动幅度(mm/s)
+- current_intensity: 电流强度(A)
+- mold_temperature: 模具温度(°C)
+- feed_rate: 进给速度(mm/min)
+- lubricant_flow: 润滑剂流量(ml/min)
+- clamp_force: 夹紧力(kN)
+- equipment_id: 设备ID
+- operator_id: 操作员ID
+
+### 2. material_data.csv - 物料批次表 (200条记录)
+原材料批次信息，包含：
+- material_batch_id: 物料批次ID
+- supplier: 供应商(A/B/C)
+- material_type: 材料类型(HT250/HT300/QT450/QT500)
+- carbon_content: 碳含量(%)
+- silicon_content: 硅含量(%)
+- manganese_content: 锰含量(%)
+- phosphorus_content: 磷含量(%)
+- sulfur_content: 硫含量(%)
+- raw_hardness: 原材料硬度(HB)
+- tensile_strength: 抗拉强度(MPa)
+- inspection_date: 检验日期
+- material_status: 物料状态(NORMAL/RISK)
+- risk_reason: 风险原因
+- storage_temperature: 存储温度(°C)
+- storage_humidity: 存储湿度(%)
+
+### 3. quality_label.csv - 质量标签表 (500条记录)
+最终产品质量检验结果，包含：
+- batch_id: 生产批次号
+- material_batch_id: 物料批次ID
+- quality_status: 质量状态(0=合格, 1=缺陷)
+- defect_type: 缺陷类型
+- root_cause: 根本原因
+- thickness: 厚度(mm)
+- parallelism: 平行度(mm)
+- hardness: 硬度(HB)
+- surface_roughness: 表面粗糙度(μm)
+- inspection_time: 检验时间
+- inspector: 检验员ID
+
+### 4. equipment_data.csv - 设备状态表 (1000条记录)
+生产设备运行状态数据，包含：
+- equipment_id: 设备ID
+- timestamp: 时间戳
+- status: 设备状态(RUNNING/MAINTENANCE/WARNING)
+- temperature: 设备温度(°C)
+- vibration: 振动值(mm/s)
+- power_consumption: 功耗(kW)
+- oil_pressure: 油压(bar)
+- hydraulic_pressure: 液压(MPa)
+- spindle_load: 主轴负载(%)
+- operating_hours: 运行小时数
+
+### 5. environment_data.csv - 环境参数表 (2000条记录)
+生产车间环境监测数据，包含：
+- zone_id: 区域ID
+- timestamp: 时间戳
+- temperature: 环境温度(°C)
+- humidity: 环境湿度(%)
+- air_pressure: 大气压(kPa)
+- dust_concentration: 粉尘浓度(mg/m³)
+- noise_level: 噪声水平(dB)
+- light_intensity: 光照强度(lux)
+
+## 预设的因果模式（供AI模型学习）
+
+### 主要质量缺陷根因：
+1. **成型压力不足**：当forming_pressure < 115MPa时，缺陷概率显著增加
+2. **材料成分异常**：供应商C的物料中silicon_content < 1.8%时，缺陷概率增加
+3. **加热温度过高**：当heating_temperature > 870°C时，容易导致过热变形
+4. **冷却液流量不足**：当coolant_flow < 22L/min时，冷却效果不足
+5. **设备振动过大**：当vibration_amplitude > 3.5mm/s时，影响加工精度
+
+### 时间相关的异常模式：
+1. **2024-04-10至2024-04-15**：成型压力参数逐渐下降（模拟设备老化）
+2. **2024-05-05至2024-05-10**：加热温度波动增大（模拟温控系统不稳定）
+3. **2024-04-20至2024-04-22**：Zone-C区域环境温度异常（空调故障）
+
+## 数据关联关系
+1. process_data.batch_id ↔ quality_label.batch_id
+2. quality_label.material_batch_id ↔ material_data.material_batch_id
+3. process_data.equipment_id ↔ equipment_data.equipment_id（通过时间关联）
+4. process_data.timestamp ↔ environment_data.timestamp（通过时间和区域关联）
+
+## 使用建议
+1. **特征工程**：可基于process_data计算统计特征（均值、方差、趋势等）
+2. **模型训练**：使用process_data和material_data作为特征，quality_label.quality_status作为标签
+3. **可解释性分析**：使用SHAP/LIME分析各特征对质量预测的贡献度
+4. **根因分析**：结合root_cause字段验证模型的可解释性结果
+
+## 注意事项
+1. 数据包含约5%的随机缺失值，模拟真实采集环境
+2. 时间戳已按时间顺序生成，适合时间序列分析
+3. 缺陷率约为15%，符合工业实际场景
+4. 所有数据已脱敏处理，仅用于教学和科研目的
