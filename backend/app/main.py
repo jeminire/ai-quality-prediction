@@ -6,7 +6,7 @@ deps_path = os.path.join(os.path.dirname(__file__), '..', 'deps')
 if os.path.exists(deps_path):
     sys.path.insert(0, os.path.abspath(deps_path))
 
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from app.config import config
@@ -15,7 +15,7 @@ from app.utils.logger import setup_logger
 from app.routes import register_routes
 
 def create_app(config_name='default'):
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='static', static_url_path='')
     app.config.from_object(config[config_name])
     
     # 初始化数据库
@@ -27,14 +27,6 @@ def create_app(config_name='default'):
     # 配置CORS
     CORS(app, resources={r"/api/*": {"origins": "*"}})
     
-    # 禁用缓存，确保数据实时同步
-    @app.after_request
-    def add_no_cache_headers(response):
-        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
-        return response
-    
     # 设置日志
     setup_logger(app)
     
@@ -44,6 +36,15 @@ def create_app(config_name='default'):
     # 创建数据库表
     with app.app_context():
         db.create_all()
+    
+    # 生产环境提供前端静态文件
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
+    def serve_frontend(path):
+        if path != '' and os.path.exists(os.path.join(app.static_folder, path)):
+            return send_from_directory(app.static_folder, path)
+        else:
+            return send_from_directory(app.static_folder, 'index.html')
     
     return app
 
