@@ -116,8 +116,8 @@ export const Dashboard: React.FC = () => {
     ];
     
     const rows = dailyData.map(day => {
-      const合格率 = day.total > 0 ? ((day.qualified / day.total) * 100).toFixed(1) : '0';
-      const趋势 = day.qualifiedRate > 90 ? '良好' : day.qualifiedRate > 80 ? '正常' : '需关注';
+      const 合格率 = day.total > 0 ? ((day.qualified / day.total) * 100).toFixed(1) : '0';
+      const 趋势 = day.qualifiedRate > 90 ? '良好' : day.qualifiedRate > 80 ? '正常' : '需关注';
       
       return [
         day.date,

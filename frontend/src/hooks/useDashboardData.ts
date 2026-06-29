@@ -153,6 +153,10 @@ export const useDashboardData = () => {
     passRate: KPIValue;
     riskCount: KPIValue;
     oee: KPIValue;
+    totalBatches: number;
+    qualifiedBatches: number;
+    unqualifiedBatches: number;
+    qualifiedRate: number;
   } => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -193,6 +197,10 @@ export const useDashboardData = () => {
       passRate: { value: todayPassRate, trend: passRateTrend, unit: '%' },
       riskCount: { value: todayRiskCount, trend: riskTrend, unit: '个' },
       oee: { value: oeeValue, trend: oeeTrend, unit: '%' },
+      totalBatches: todayBatches.length,
+      qualifiedBatches: todayPassCount,
+      unqualifiedBatches: todayBatches.length - todayPassCount,
+      qualifiedRate: todayPassRate,
     };
   }, [batches]);
   
