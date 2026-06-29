@@ -8,6 +8,7 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.makedirs(os.path.join(PROJECT_ROOT, 'logs'), exist_ok=True)
 os.makedirs(os.path.join(PROJECT_ROOT, 'models'), exist_ok=True)
 os.makedirs(os.path.join(PROJECT_ROOT, 'data'), exist_ok=True)
+os.makedirs(os.path.join(PROJECT_ROOT, 'instance'), exist_ok=True)
 
 class Config:
     SERVER_HOST = os.getenv('SERVER_HOST', '0.0.0.0')
